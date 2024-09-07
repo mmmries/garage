@@ -13,9 +13,7 @@ defmodule Garage.Application do
 
     children =
       [
-        # Children for all targets
-        # Starts a worker by calling: Garage.Worker.start_link(arg)
-        # {Garage.Worker, arg},
+        # Children that should run on all devices
       ] ++ children(target())
 
     Supervisor.start_link(children, opts)
@@ -32,9 +30,7 @@ defmodule Garage.Application do
 
   def children(_target) do
     [
-      # Children for all targets except host
-      # Starts a worker by calling: Garage.Worker.start_link(arg)
-      # {Garage.Worker, arg},
+      Garage.Button
     ]
   end
 
