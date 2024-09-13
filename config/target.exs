@@ -6,6 +6,14 @@ import Config
 
 config :logger, backends: [RingLogger]
 
+config :garage, :nats_conn_settings, %{
+  host: "connect.ngs.global",
+  tls: true,
+  ssl_opts: [verify: :verify_none],
+  jwt: System.get_env("NATS_JWT"),
+  nkey_seed: System.get_env("NATS_NKEY_SEED")
+}
+
 # Use shoehorn to start the main application. See the shoehorn
 # library documentation for more control in ordering how OTP
 # applications are started and handling failures.

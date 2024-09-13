@@ -30,11 +30,33 @@ defmodule Garage.Application do
 
   def children(_target) do
     [
-      Garage.Button
+      Garage.Button,
+      {Gnat.ConnectionSupervisor, connection_settings()},
+      {Gnat.ConsumerSupervisor, supervisor_settings()}
     ]
   end
 
   def target() do
     Application.get_env(:garage, :target)
+  end
+
+  defp connection_settings do
+    %{
+      name: :gnat,
+      backoff_period: 5_000,
+      connection_settings: [
+        Application.get_env(:garage, :nats_conn_settings)
+      ]
+    }
+  end
+
+  defp supervisor_settings do
+    %{
+      connection_name: :gnat,
+      module: Garage.NatsServer,
+      subscription_topics: [
+        %{topic: "home.garage_door"}
+      ],
+    }
   end
 end

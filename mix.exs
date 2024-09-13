@@ -54,6 +54,7 @@ defmodule Garage.MixProject do
       # Dependencies for all targets except :host
       {:nerves_pack, "~> 0.7.0", targets: @all_targets},
       {:circuits_gpio, "~> 2.1", targets: @all_targets},
+      {:gnat, "~> 1.8"},
 
       # Dependencies for specific targets
       # NOTE: It's generally low risk and recommended to follow minor version
