@@ -32,7 +32,8 @@ defmodule Garage.Application do
     [
       Garage.Button,
       {Gnat.ConnectionSupervisor, connection_settings()},
-      {Gnat.ConsumerSupervisor, supervisor_settings()}
+      {Gnat.ConsumerSupervisor, supervisor_settings()},
+      Garage.ScreenMonitor
     ]
   end
 
@@ -56,7 +57,7 @@ defmodule Garage.Application do
       module: Garage.NatsServer,
       subscription_topics: [
         %{topic: "home.garage_door"}
-      ],
+      ]
     }
   end
 end
