@@ -33,7 +33,7 @@ defmodule Garage.Application do
       Garage.Button,
       {Gnat.ConnectionSupervisor, connection_settings()},
       {Gnat.ConsumerSupervisor, supervisor_settings()},
-      Garage.ScreenMonitor
+      Garage.DoorMonitor
     ]
   end
 

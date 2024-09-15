@@ -1,4 +1,4 @@
-defmodule Garage.ScreenMonitor do
+defmodule Garage.DoorMonitor do
   use GenServer
   require Logger
   alias Circuits.GPIO
@@ -15,7 +15,7 @@ defmodule Garage.ScreenMonitor do
           screen_gpio: GPIO.handle(),
           door_state: :open | :closed | nil,
           screen_state: :open | :closed | nil,
-          state: :open | :door_closed | :screen_closed | :unknown
+          status: :open | :door_closed | :screen_closed | :unknown
         }
 
   def start_link(opts) do
@@ -33,29 +33,29 @@ defmodule Garage.ScreenMonitor do
       door_gpio: door,
       screen_state: nil,
       door_state: nil,
-      state: nil
+      status: nil
     }
 
     state =
       state
       |> read_sensors()
-      |> infer_state()
+      |> infer_status()
 
     schedule_check()
     {:ok, state}
   end
 
-  def handle_call(:get_state, _from, state) do
-    {:reply, state.door_state, state}
+  def handle_call(:get_status, _from, state) do
+    {:reply, state.status, state}
   end
 
   def handle_info(:check_state, state) do
     new_state =
       state
       |> read_sensors()
-      |> infer_state()
+      |> infer_status()
 
-    if new_state != state do
+    if new_state.status != state.status do
       publish_state_change(new_state)
     end
 
@@ -66,7 +66,7 @@ defmodule Garage.ScreenMonitor do
   def handle_info({:circuits_gpio, @door_pin, _timestamp, 0}, state) do
     state =
       %{state | door_state: :closed}
-      |> infer_state()
+      |> infer_status()
       |> publish_state_change()
 
     {:noreply, state}
@@ -75,7 +75,7 @@ defmodule Garage.ScreenMonitor do
   def handle_info({:circuits_gpio, @door_pin, _timestamp, 1}, state) do
     state =
       %{state | door_state: :open}
-      |> infer_state()
+      |> infer_status()
       |> publish_state_change()
 
     {:noreply, state}
@@ -84,7 +84,7 @@ defmodule Garage.ScreenMonitor do
   def handle_info({:circuits_gpio, @screen_pin, _timestamp, 0}, state) do
     state =
       %{state | screen_state: :closed}
-      |> infer_state()
+      |> infer_status()
       |> publish_state_change()
 
     {:noreply, state}
@@ -93,7 +93,7 @@ defmodule Garage.ScreenMonitor do
   def handle_info({:circuits_gpio, @screen_pin, _timestamp, 1}, state) do
     state =
       %{state | screen_state: :open}
-      |> infer_state()
+      |> infer_status()
       |> publish_state_change()
 
     {:noreply, state}
@@ -113,13 +113,13 @@ defmodule Garage.ScreenMonitor do
     end
   end
 
-  @spec infer_state(state()) :: state()
-  def infer_state(state) do
+  @spec infer_status(state()) :: state()
+  def infer_status(state) do
     case {state.door_state, state.screen_state} do
-      {:open, :open} -> %{state | state: :open}
-      {:closed, :open} -> %{state | state: :door_closed}
-      {:open, :closed} -> %{state | state: :screen_closed}
-      {:closed, :closed} -> %{state | state: :unknown}
+      {:open, :open} -> %{state | status: :open}
+      {:closed, :open} -> %{state | status: :door_closed}
+      {:open, :closed} -> %{state | status: :screen_closed}
+      {:closed, :closed} -> %{state | status: :unknown}
     end
   end
 
@@ -129,12 +129,12 @@ defmodule Garage.ScreenMonitor do
 
   defp publish_state_change(state) do
     Logger.info("Garage screen state changed to: #{inspect(state)}")
-    # publish to nats?
+    :ok = Gnat.pub(:gnat, "home.garage_door.status", Atom.to_string(state.status))
     state
   end
 
   # Client API
-  def get_state do
-    GenServer.call(__MODULE__, :get_state)
+  def get_status do
+    GenServer.call(__MODULE__, :get_status)
   end
 end

@@ -7,6 +7,10 @@ defmodule Garage.NatsServer do
     :ok
   end
 
+  def request(%{body: "get_status", topic: "home.garage_door"}) do
+    {:reply, Atom.to_string(Garage.DoorMonitor.get_status())}
+  end
+
   def request(other) do
     Logger.error("Unexpected Nats Message", message: other)
     :ok
