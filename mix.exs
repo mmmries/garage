@@ -2,7 +2,7 @@ defmodule Garage.MixProject do
   use Mix.Project
 
   @app :garage
-  @version "0.1.0"
+  @version "0.2.0"
   @all_targets [
     :rpi,
     :rpi0,
@@ -52,6 +52,7 @@ defmodule Garage.MixProject do
       {:nerves_runtime, "~> 0.13.0"},
 
       # Dependencies for all targets except :host
+      {:nerves_hub_link, "~> 2.6", targets: @all_targets},
       {:nerves_pack, "~> 0.7.0", targets: @all_targets},
       {:circuits_gpio, "~> 2.1"},
       {:gnat, "~> 1.8"},

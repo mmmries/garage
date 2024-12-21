@@ -14,6 +14,14 @@ config :garage, :nats_conn_settings, %{
   nkey_seed: System.get_env("NATS_NKEY_SEED")
 }
 
+config :nerves_hub_link,
+  host: "devices.nervescloud.com",
+  remote_iex: true,
+  shared_secret: [
+    product_key: System.get_env("NERVES_CLOUD_KEY"),
+    product_secret: System.get_env("NERVES_CLOUD_SECRET")
+  ]
+
 # Use shoehorn to start the main application. See the shoehorn
 # library documentation for more control in ordering how OTP
 # applications are started and handling failures.
