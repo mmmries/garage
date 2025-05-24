@@ -16,13 +16,22 @@ https://hexdocs.pm/nerves/supported-targets.html
 
 ## Getting Started
 
-To start your Nerves app:
-  * `export MIX_TARGET=rpi3a`
-  * `export NERVES_SSID=***`
-  * `export NERVES_PSK=***`
+Create a `.env` file with all the secrets you need
+
+```
+export NERVES_SSID="MySSID"
+export NERVES_PSK="WifiPassword"
+export MIX_TARGET="rpi3a"
+export NATS_JWT="...get your JWT from the synadia cloud site..."
+export NATS_NKEY_SEED="...get from the synadia cloud site..."
+export NERVES_CLOUD_KEY="...get from nerves cloud site..."
+export NERVES_CLOUD_SECRET="...get from nerves cloud site..."
+```
+
+  * Now load secrets with `source .env`
   * Install dependencies with `mix deps.get`
   * Create firmware with `mix firmware`
-  * Burn to an SD card with `mix burn`
+  * Burn to an SD card with `mix burn` or update the device with `./upload.sh garage.local`
 
 ## Learn more
 
