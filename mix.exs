@@ -42,7 +42,7 @@ defmodule Garage.MixProject do
   defp deps do
     [
       # Dependencies for all targets
-      {:nerves, "~> 1.10", runtime: false},
+      {:nerves, "~> 1.11", runtime: false},
       {:shoehorn, "~> 0.9.1"},
       {:ring_logger, "~> 0.10.0"},
       {:toolshed, "~> 0.3.0"},
