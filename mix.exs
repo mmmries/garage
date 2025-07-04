@@ -55,7 +55,7 @@ defmodule Garage.MixProject do
       {:nerves_hub_link, "~> 2.6", targets: @all_targets},
       {:nerves_pack, "~> 0.7.0", targets: @all_targets},
       {:circuits_gpio, "~> 2.1"},
-      {:gnat, "1.10.2-rc0"},
+      {:gnat, "1.10.2"},
 
       # Dependencies for specific targets
       # NOTE: It's generally low risk and recommended to follow minor version

@@ -63,40 +63,17 @@ defmodule Garage.DoorMonitor do
     {:noreply, new_state}
   end
 
-  def handle_info({:circuits_gpio, @door_pin, _timestamp, 0}, state) do
-    state =
-      %{state | door_state: :closed}
+  def handle_info({:circuits_gpio, pin, _timestamp, value}, state) do
+    new_state =
+      state
+      |> read_sensors()
       |> infer_status()
-      |> publish_state_change()
 
-    {:noreply, state}
-  end
+    if new_state.status != state.status do
+      publish_state_change(new_state)
+    end
 
-  def handle_info({:circuits_gpio, @door_pin, _timestamp, 1}, state) do
-    state =
-      %{state | door_state: :open}
-      |> infer_status()
-      |> publish_state_change()
-
-    {:noreply, state}
-  end
-
-  def handle_info({:circuits_gpio, @screen_pin, _timestamp, 0}, state) do
-    state =
-      %{state | screen_state: :closed}
-      |> infer_status()
-      |> publish_state_change()
-
-    {:noreply, state}
-  end
-
-  def handle_info({:circuits_gpio, @screen_pin, _timestamp, 1}, state) do
-    state =
-      %{state | screen_state: :open}
-      |> infer_status()
-      |> publish_state_change()
-
-    {:noreply, state}
+    {:noreply, new_state}
   end
 
   @spec read_sensors(state()) :: state()
